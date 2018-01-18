@@ -6,13 +6,25 @@ package top.xiaotiejiang.netlibrary.resp;
 
 public abstract class BaseModel {
 
-    private int status;
+    private int code;
 
-    public int getStatus() {
-        return status;
+    private String msg;
+
+    public int getCode() {
+        return code;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCode(int code) {
+        this.code = code;
     }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+
 }

@@ -1,12 +1,13 @@
 package top.xiaotiejiang.netlibrary.client;
 
-import com.google.gson.Gson;
+import android.util.Log;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -17,16 +18,21 @@ import top.xiaotiejiang.netlibrary.resp.BaseModel;
  */
 
 public class RetrofitClient {
+
+    private static final String TAG = "RetrofitClient";
+
     private static HttpService httpService;
 
-    private void initRetrofit(){
+    /**
+     * 初始化 service
+     */
+    private static void initRetrofit(){
         if (httpService == null) {
             synchronized (RetrofitClient.class) {
                 if (httpService == null) {
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl("")
                             .addConverterFactory(GsonConverterFactory.create())
-                            .client(null)
                             .build();
                     httpService = retrofit.create(HttpService.class);
                 }
@@ -34,24 +40,31 @@ public class RetrofitClient {
         }
     }
 
-    public static <T, E extends BaseModel> void post(String postMethodName, T postBean, BaseCallBack<E> callBack){
-        RequestBody requestBody = createRequestBody(postBean);
 
+    public static <T, E extends BaseModel> void post(String postMethodName, T postBean, BaseCallBack<E> callBack){
+        initRetrofit();
         try {
-            Method method = HttpService.class.getDeclaredMethod(postMethodName, RequestBody.class);
-            Call<E> call = (Call<E>) method.invoke(httpService, requestBody);
+            Method method = HttpService.class.getDeclaredMethod(postMethodName, postBean.getClass());
+            Call<E> call = (Call<E>) method.invoke(httpService, postBean);
             call.enqueue(callBack);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+            Log.e(TAG, "detail = " + e.getMessage());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            Log.e(TAG, "detail = " + e.getMessage());
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+            Log.e(TAG, "detail = " + e.getMessage());
         }
     }
 
-    private static  <T> RequestBody createRequestBody(T bean){
-        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(bean));
+    private static class ClientInterceptor implements Interceptor{
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            return null;
+        }
     }
 
 }

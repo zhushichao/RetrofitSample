@@ -4,9 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import org.joda.time.LocalDateTime;
-
-import java.text.SimpleDateFormat;
+import top.xiaotiejiang.netlibrary.DataManager;
+import top.xiaotiejiang.netlibrary.client.BaseCallBack;
+import top.xiaotiejiang.netlibrary.req.RegisterReq;
+import top.xiaotiejiang.netlibrary.resp.RegisterResp;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,13 +16,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocalDateTime now = LocalDateTime.now();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        for (int i = 0; i < 10; i++) {
-            String format = sdf.format(now.toDate());
-            Log.e("date _ ", "__" + format + "--------" + now.getDayOfWeek());
-            now = now.plusDays(1);
-        }
+        DataManager.sendPostHttp("register", new RegisterReq("1234", "13333333333", "klafjs;ldkfj;aksldfj")
+                , new BaseCallBack<RegisterResp>() {
+            @Override
+            protected void on200Resp(RegisterResp bean) {
+                Log.e("kjllkjl", "" + bean.getCode());
+            }
+
+            @Override
+            protected void onNo200Resp(RegisterResp bean) {
+                Log.e("kjllkjl", "" + bean.getCode());
+            }
+        });
 
     }
 }

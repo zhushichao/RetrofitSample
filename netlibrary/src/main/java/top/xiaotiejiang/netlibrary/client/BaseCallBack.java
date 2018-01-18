@@ -17,7 +17,7 @@ public abstract class BaseCallBack <T extends BaseModel> implements Callback<T> 
             int code = response.raw().code();
             if (code == HttpCode.RESP_SUCCESS){
                 T bean = response.body();
-                int status = bean.getStatus();
+                int status = bean.getCode();
                 if (status == HttpCode.RESP_OK){
                     on200Resp(bean);
                 } else {
@@ -34,7 +34,7 @@ public abstract class BaseCallBack <T extends BaseModel> implements Callback<T> 
 
     @Override
     public void onFailure(Call<T> call, Throwable t) {
-
+        onError(call, t);
     }
 
 
@@ -43,7 +43,7 @@ public abstract class BaseCallBack <T extends BaseModel> implements Callback<T> 
     protected abstract void onNo200Resp(T bean);
 
     protected void onError(Call<T> call, Throwable t){
-
+        onError(call, new Exception("response error, detail = " + t.toString()));
     }
 
 
